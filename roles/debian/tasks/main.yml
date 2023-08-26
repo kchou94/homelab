@@ -1,0 +1,76 @@
+---
+- name: Configure apt sources
+  ansible.builtin.template:
+    src: sources.list.j2
+    dest: /etc/apt/sources.list
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - net-tools
+    - bash-completion
+    - vim
+
+- name: Install x470 package
+  ansible.builtin.apt:
+    name: python3-docker
+    state: present
+  when: inventory_hostname == 'x470'
+
+- name: Install b550m package
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - linux-headers-amd64
+    - zfsutils-linux
+  when: inventory_hostname == 'b550m'
+
+- name: Install vagrant
+  block:
+    - name: Install prequisites for vagrant
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - qemu-kvm
+        - qemu-system-x86
+        - libvirt-daemon-system
+        - libvirt-clients
+        - virt-manager
+        - gir1.2-spiceclientgtk-3.0
+        - dnsmasq
+        - qemu-utils
+        - iptables
+
+    - name: Add user to libvirt and kvm groups
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups:
+          - libvirt
+          - kvm
+        append: true
+
+    - name: Install vagrant
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - vagrant
+        - vagrant-libvirt
+
+    - name: Enable libvirt service
+      ansible.builtin.service:
+        name: libvirtd
+        enabled: true
+        state: started
+  when: inventory_hostname == 'x470'

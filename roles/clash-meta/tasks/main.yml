@@ -1,0 +1,80 @@
+---
+- name: Create clash-meta directory
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  with_items:
+    - {'path': '/etc/clash-meta', 'mode': '0755'}
+
+- name: Template clash-meta config files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "0755"
+  with_items:
+    - {'src': 'templates/config.yaml.j2', 'dest': '/etc/clash-meta/config.yaml'}
+
+- name: Clash-meta version block
+  block:
+    - name: Check if binary exists
+      ansible.builtin.stat:
+        path: /usr/local/bin/clash-meta
+      register: binary
+
+    - name: Check clash-meta version
+      ansible.builtin.command: /usr/local/bin/clash-meta -v
+      register: clash_meta_version_check
+      when: binary.stat.exists
+      changed_when: false
+
+    - name: Show clash-meta version
+      ansible.builtin.debug:
+        msg: "{{ clash_meta_version_check | regex_search('\\d.\\d+.\\d+') }} is installed, and {{ clash_meta_version }} is the newest"
+  rescue:
+    - name: Show rescue message
+      ansible.builtin.debug:
+        msg: "The clash-meta version check seems to have failed. Setting the version to match the one defined by 'clash_meta_version' variable."
+    - name: "Set variable for clash-meta version"
+      ansible.builtin.set_fact:
+        clash_meta_version_check: "{{ clash_meta_version }}"
+
+- name: install clash-meta if its not present
+  block:
+    - name: Download clash-meta binary
+      ansible.builtin.get_url:
+        url: "https://ghproxy.com/https://github.com/MetaCubeX/Clash.Meta/releases/download/v{{ clash_meta_version }}/clash.meta-linux-amd64-v{{ clash_meta_version }}.gz"
+        dest: /usr/local/bin/clash.meta-linux-amd64-v{{ clash_meta_version }}.gz
+
+    - name: Gzip -d clash-meta binary
+      ansible.builtin.command:
+        cmd: gzip -d /usr/local/bin/clash.meta-linux-amd64-v{{ clash_meta_version }}.gz
+
+    - name: Rename clash-meta binary
+      ansible.builtin.command:
+        cmd: mv /usr/local/bin/clash.meta-linux-amd64-v{{ clash_meta_version }} /usr/local/bin/clash-meta
+
+    - name: Set clash-meta binary permissions
+      ansible.builtin.file:
+        path: /usr/local/bin/clash-meta
+        mode: "0755"
+  when: (not binary.stat.exists) or (clash_meta_version_check | regex_search('\d.\d+.\d+') != clash_meta_version)
+
+- name: Template systemd unit file
+  ansible.builtin.template:
+    src: templates/clash-meta.service.j2
+    dest: /etc/systemd/system/clash-meta.service
+    owner: root
+    group: root
+    mode: '0755'
+  notify: Reload systemd daemon
+
+- name: Enable and start clash-meta service
+  ansible.builtin.systemd:
+    name: clash-meta
+    enabled: true
+    state: started

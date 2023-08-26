@@ -1,0 +1,14 @@
+---
+vagrant_enabled: false
+wireguard_enabled: false
+loki_enabled: true
+docker_enabled: true
+
+# victoriametrics
+victoriametrics_enabled: true
+victoriametrics_version: "v1.93.1"
+victoriametrics_data_dir: "/data/victoria-metrics/"
+victoriametrics_retention_period_months: "1"
+victoriametrics_host: "192.168.50.4"
+
+n9e_enabled: true

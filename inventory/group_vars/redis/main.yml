@@ -1,0 +1,4 @@
+---
+redis_enabled: true
+redis_bind_interface: "0.0.0.0"
+redis_host: "192.168.50.4"

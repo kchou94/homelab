@@ -1,0 +1,68 @@
+---
+- name: Create /data/categraf dir
+  ansible.builtin.file:
+    path: /data/categraf
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Check if binary exists
+  ansible.builtin.stat:
+    path: /data/categraf/categraf
+  register: binary
+
+- name: install
+  block:
+    - name: Unrachive categraf.tar.gz
+      ansible.builtin.unarchive:
+        src: "https://github.com/flashcatcloud/categraf/releases/download/v{{ categraf_version }}/categraf-v{{ categraf_version }}-linux-amd64.tar.gz"
+        dest: /data/categraf
+        remote_src: true
+
+    - name: Copy categraf-v0.3.27-linux-amd64 to categraf
+      ansible.builtin.file:
+        src: /data/categraf/categraf-v0.3.27-linux-amd64
+        dest: /data/categraf/categraf
+        state: link
+        force: yes
+  when: (not binary.stat.exists)
+
+- name: Template config.toml.j2
+  ansible.builtin.template:
+    src: config.toml.j2
+    dest: /data/categraf/categraf/conf/config.toml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Use mysql
+  block:
+    - name: Template mysql.toml.j2
+      ansible.builtin.template:
+        src: mysql.toml.j2
+        dest: /data/categraf/categraf/conf/input.mysql/mysql.toml
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Restart categraf
+      ansible.builtin.systemd:
+        name: categraf
+        state: restarted
+  when: mysql_enabled is defined and mysql_enabled
+
+- name: Template categraf.service.j2
+  ansible.builtin.template:
+    src: categraf.service.j2
+    dest: /etc/systemd/system/categraf.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Start categraf
+  ansible.builtin.systemd:
+    name: categraf
+    state: started
+    enabled: true
+    daemon_reload: true

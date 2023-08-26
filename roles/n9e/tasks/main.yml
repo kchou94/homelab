@@ -1,0 +1,79 @@
+---
+# TODO: IF n9e_v6 已经导入过了，就不要再导入了
+
+# check mysql database n9e_v6 having table users
+# - name: Check mysql database n9e_v6 having table users
+#   community.mysql.mysql_query:
+#     login_user: n9e
+#     login_password: "{{ mysql_n9e_password }}"
+#     login_host: "{{ mysql_host }}"
+#     login_port: "{{ mysql_port }}"
+#     login_db: n9e_v6
+#     query: select * from users
+#   register: mysql_db_n9e_v6_table_users_exists
+#   ignore_errors: true
+
+# if not exists, import n9e.sql
+# - name: Import n9e.sql
+  # block:
+# - name: Copy n9e.sql to target
+#   ansible.builtin.template:
+#     src: n9e.sql.j2
+#     dest: /tmp/n9e.sql
+#     owner: root
+#     group: root
+#     mode: "0644"
+
+# - name: Import n9e.sql
+#   community.mysql.mysql_db:
+#     login_user: n9e
+#     login_password: "{{ mysql_n9e_password }}"
+#     login_host: "{{ mysql_host }}"
+#     login_port: "{{ mysql_port }}"
+#     name: all
+#     state: import
+#     target: /tmp/n9e.sql
+  # when: mysql_db_n9e_v6_exists is failed
+
+- name: Create /data/n9e dir
+  ansible.builtin.file:
+    path: /data/n9e
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: check if binary exists
+  ansible.builtin.stat:
+    path: /data/n9e/n9e
+  register: binary
+
+- name: unrachive n9e.tar.gz
+  ansible.builtin.unarchive:
+    src: "https://github.com/ccfos/nightingale/releases/download/v{{ n9e_version }}/n9e-v{{ n9e_version }}-linux-amd64.tar.gz"
+    dest: /data/n9e
+    remote_src: yes
+  when: (not binary.stat.exists)
+
+- name: Template config.toml.j2
+  ansible.builtin.template:
+    src: config.toml.j2
+    dest: /data/n9e/etc/config.toml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Template n9e.service.j2
+  ansible.builtin.template:
+    src: n9e.service.j2
+    dest: /etc/systemd/system/n9e.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Start n9e
+  ansible.builtin.systemd:
+    name: n9e
+    state: started
+    enabled: true
+    daemon_reload: true

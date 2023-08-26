@@ -1,0 +1,16 @@
+---
+wireguard_enabled: true
+wireguard_port: "24653"
+wireguard_addresses:
+  - "10.8.0.1/24"
+wireguard_postup:
+  - iptables -A FORWARD -i %i -j ACCEPT;iptables -A FORWARD -o %i -j ACCEPT;iptables -t nat -A POSTROUTING -o enp42s0 -j MASQUERADE
+wireguard_postdown:
+  - iptables -D FORWARD -i %i -j ACCEPT;iptables -D FORWARD -o %i -j ACCEPT;iptables -t nat -D POSTROUTING -o enp42s0 -j MASQUERADE
+wireguard_allowed_ips: ""
+wireguard_preup:
+  - echo 1 > /proc/sys/net/ipv4/ip_forward
+wireguard_unmanaged_peers:
+  mac:
+    public_key: 2XTLem1g5T46Oze1OemE8xZAA2yUbyp6dKr9GISgOTg=
+    allowed_ips: 10.8.0.2/32

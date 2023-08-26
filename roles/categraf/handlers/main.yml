@@ -1,0 +1,5 @@
+---
+- name: Restart categraf
+  ansible.builtin.systemd:
+    name: categraf
+    state: restarted

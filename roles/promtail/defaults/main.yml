@@ -1,0 +1,5 @@
+---
+promtail_version: 2.8.4
+loki_server: 192.168.50.4
+loki_port: 3100
+add_inventory_hosts: true

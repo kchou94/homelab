@@ -1,0 +1,28 @@
+---
+# handlers file for promtail
+- name: restart promtail
+  ansible.builtin.systemd:
+    name: promtail
+    state: restarted
+    enabled: true
+
+- name: cleanup installer directory
+  ansible.builtin.file:
+    path: /usr/local/bin/promtail-linux-amd64
+    state: absent
+
+- name: move promtail binary
+  ansible.builtin.copy:
+    src: "/usr/local/bin/promtail-linux-amd64"
+    dest: /usr/local/bin/promtail
+    owner: root
+    group: root
+    mode: "0755"
+    remote_src: true
+  notify: cleanup installer directory
+
+- name: reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  tags:
+    - promtail

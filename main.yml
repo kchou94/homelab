@@ -1,0 +1,71 @@
+---
+- name: Ansible homelab
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Configure debian systems
+      ansible.builtin.include_role:
+        name: debian
+      when: ansible_os_family == 'Debian'
+
+    - name: Install clash-meta
+      ansible.builtin.include_role:
+        name: clash-meta
+      when: clash_meta_enabled is defined and clash_meta_enabled
+
+    - name: Install mysql
+      ansible.builtin.include_role:
+        name: geerlingguy.mysql
+      when: mysql_enabled is defined and mysql_enabled
+
+    - name: Install redis
+      ansible.builtin.include_role:
+        name: geerlingguy.redis
+      when: redis_enabled is defined and redis_enabled
+
+    # - name: Install pre requisites
+    #   ansible.builtin.package:
+    #     name: iptables
+    #     state: present
+    #   when: wireguard_enabled is defined and wireguard_enabled
+
+    # - name: Install wireguard
+    #   ansible.builtin.include_role:
+    #     name: githubixx.ansible_role_wireguard
+    #   when: wireguard_enabled is defined and wireguard_enabled
+
+    - name: Install loki
+      ansible.builtin.include_role:
+        name: loki
+      when: loki_enabled is defined and loki_enabled
+
+    - name: Install promtail
+      ansible.builtin.include_role:
+        name: promtail
+      when: promtail_enabled is defined and promtail_enabled
+
+    - name: Install grafana
+      ansible.builtin.include_role:
+        name: grafana
+      when: grafana_enabled is defined and grafana_enabled
+
+    - name: Install docker
+      ansible.builtin.include_role:
+        name: geerlingguy.docker
+      when: docker_enabled is defined and docker_enabled
+
+    - name: Install victoriametrics single
+      ansible.builtin.include_role:
+        name: victoriametrics.cluster.single
+      when: victoriametrics_enabled is defined and victoriametrics_enabled
+
+    - name: Install n9e
+      ansible.builtin.include_role:
+        name: n9e
+      when: n9e_enabled is defined and n9e_enabled
+
+    - name: Install categraf
+      ansible.builtin.include_role:
+        name: categraf

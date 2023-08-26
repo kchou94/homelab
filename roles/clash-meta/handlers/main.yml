@@ -1,0 +1,10 @@
+---
+- name: Restart clash-meta
+  ansible.builtin.systemd:
+    name: clash-meta
+    state: restarted
+    enabled: true
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true

@@ -1,0 +1,14 @@
+[Unit]
+Description=n9e service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/data/n9e/n9e -configs /data/n9e/etc
+TimeoutSec = 120
+Restart = on-failure
+RestartSec = 2
+
+[Install]
+WantedBy=multi-user.target
