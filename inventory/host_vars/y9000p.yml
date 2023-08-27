@@ -12,3 +12,8 @@ victoriametrics_retention_period_months: "1"
 victoriametrics_host: "192.168.50.4"
 
 n9e_enabled: true
+
+ddns_go_enabled: true
+
+vaultwarden_enabled: true
+vaultwarden_allow_signups: false

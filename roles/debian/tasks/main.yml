@@ -7,6 +7,17 @@
     group: root
     mode: "0644"
 
+- name: Check if i386 is enabled
+  shell: dpkg --print-foreign-architectures | grep i386
+  register: result_i386_check
+  changed_when: result_i386_check.rc == 1
+  failed_when: result_i386_check.rc > 1
+  when: inventory_hostname == 'x470'
+
+- name: Enable i386 architecture
+  command: dpkg --add-architecture i386
+  when: inventory_hostname == 'x470' and result_i386_check.rc == 1
+
 - name: Update apt cache
   ansible.builtin.apt:
     update_cache: true
@@ -19,11 +30,15 @@
     - net-tools
     - bash-completion
     - vim
+    - htop
 
 - name: Install x470 package
   ansible.builtin.apt:
-    name: python3-docker
+    name: "{{ item }}"
     state: present
+  with_items:
+    - python3-docker
+    - openconnect
   when: inventory_hostname == 'x470'
 
 - name: Install b550m package
@@ -73,4 +88,46 @@
         name: libvirtd
         enabled: true
         state: started
+  when: inventory_hostname == 'x470'
+
+- name: Install x11nvc
+  block:
+    - name: Install x11vnc
+      ansible.builtin.apt:
+        name: x11vnc
+        state: present
+    # - name: Template x11vnc service
+    #   ansible.builtin.template:
+    #     src: x11vnc.service.j2
+    #     dest: /etc/systemd/system/x11vnc.service
+    #     owner: root
+    #     group: root
+    #     mode: "0644"
+    # - name: Enable x11vnc service
+    #   ansible.builtin.service:
+    #     name: x11vnc
+    #     enabled: true
+    #     state: started
+    #     reload: true
+  when: inventory_hostname == 'x470'
+
+- name: Create homelab network
+  community.docker.docker_network:
+    name: homelab
+  when: docker_enabled is defined and docker_enabled is true
+  register: result
+  until: result is succeeded
+
+- name: Install amd gpu driver and steam and fonts
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libgl1-mesa-dri:i386
+    - mesa-vulkan-drivers
+    - mesa-vulkan-drivers:i386
+    - steam
+    - fonts-liberation2
+    - fonts-noto-cjk
+    - fonts-noto-cjk-extra
   when: inventory_hostname == 'x470'

@@ -1,0 +1,36 @@
+---
+- name: Start Vaultwarden Server
+  block:
+  - name: Create Vaultwarden Directories
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      mode: "0755"
+    with_items:
+      - /data/vaultwarden
+
+  - name: Vaultwarden Docker Container
+    community.docker.docker_container:
+      name: vaultwarden
+      image: vaultwarden/server:1.29.1
+      volumes:
+        - "/data/vaultwarden:/data"
+      networks:
+        - name: homelab
+      env:
+        TZ: Asia/Shanghai
+        DOMAIN: "https://vaultwarden.{{ cloudflared_tunnel_domain_name }}"
+        SIGNUPS_ALLOWED: "{{ vaultwarden_allow_signups | string }}"
+        WEBSOCKET_ENABLED: "true"
+        DATABASE_URL: 'mysql://vaultwarden:{{ mysql_vaultwarden_password }}@{{ mysql_host }}:{{ mysql_port }}/vaultwarden?charset=utf8mb4?ssl_mode=disabled'
+        RUST_BACKTRACE: "1"
+      restart_policy: unless-stopped
+  when: vaultwarden_enabled is true
+
+- name: Stop Vaultwarden Server
+  block:
+    - name: Stop Vaultwarden Server
+      community.docker.docker_container:
+        name: "{{ vaultwarden_container_name }}"
+        state: absent
+  when: vaultwarden_enabled is false

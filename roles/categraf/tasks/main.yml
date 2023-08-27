@@ -52,6 +52,46 @@
         state: restarted
   when: mysql_enabled is defined and mysql_enabled
 
+- name: Use redis
+  block:
+    - name: Template redis.toml.j2
+      ansible.builtin.template:
+        src: redis.toml.j2
+        dest: /data/categraf/categraf/conf/input.redis/redis.toml
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Restart categraf
+      ansible.builtin.systemd:
+        name: categraf
+        state: restarted
+  when: redis_enabled is defined and redis_enabled
+
+- name: Use docker
+  block:
+    - name: Template docker.toml.j2
+      ansible.builtin.template:
+        src: docker.toml.j2
+        dest: /data/categraf/categraf/conf/input.docker/docker.toml
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Restart categraf
+      ansible.builtin.systemd:
+        name: categraf
+        state: restarted
+  when: docker_enabled is defined and docker_enabled
+
+- name: Template ntp.toml.j2
+  ansible.builtin.template:
+    src: docker.toml.j2
+    dest: /data/categraf/categraf/conf/input.ntp/ntp.toml
+    owner: root
+    group: root
+    mode: "0644"
+
 - name: Template categraf.service.j2
   ansible.builtin.template:
     src: categraf.service.j2

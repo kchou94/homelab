@@ -1,0 +1,48 @@
+---
+- name: Start ddns-go
+  block:
+  - name: Create ddns-go directories
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      mode: "0755"
+    with_items:
+      - /data/ddns-go
+
+  - name: Create ddns-go Docker Container
+    community.docker.docker_container:
+      name: ddns-go
+      image: "ghcr.io/jeessy2/ddns-go:{{ ddns_go_image_version }}"
+      volumes:
+        - "/data/ddns-go:/root"
+      ports:
+        - "9876:9876"
+      env:
+        TZ: Asia/Shanghai
+        GF_AUTH_ANONYMOUS_ENABLED: "true"
+        GF_AUTH_DISABLE_LOGIN_FORM: "true"
+        GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+      # labels:
+      #   traefik.enable: "true"
+      #   traefik.http.routers.ddns-go.rule: "Host(`ddns-go.{{ traefik_domain_name }}`)"
+      #   traefik.http.routers.ddns-go.entrypoints: "websecure"
+      #   traefik.http.routers.ddns-go.middlewares: "gzip"
+      #   traefik.http.routers.ddns-go.tls.certresolver: "myresolver"
+      #   traefik.http.services.ddns-go.loadbalancer.server.port: "3000"
+      # log_driver: "loki"
+      # log_options:
+      #   loki-url: http://loki-gateway:80/loki/api/v1/push
+      #   max-size: "1m"
+      restart_policy: always
+      # recreate: "{{ template_config is changed }}"
+  when: ddns_go_enabled is true
+
+- name: Stop ddns-go
+  block:
+    - name: Stop ddns-go
+      community.docker.docker_container:
+        name: ddns-go
+        state: absent
+  when: ddns_go_enabled is false

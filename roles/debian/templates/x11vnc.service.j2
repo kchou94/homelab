@@ -1,0 +1,17 @@
+[Unit]
+Description=x11vnc VNC Server for X11
+Requires=display-manager.service, sddm.service
+After=display-manager.service, sddm.service
+StartLimitIntervalSec=0
+
+[Service]
+ExecStartPre=/bin/sleep 3
+Type=forking
+# ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment SDDMXAUTH=$(/usr/bin/find /var/run/sddm/ -type f)"
+ExecStart=/usr/bin/x11vnc -auth /var/run/sddm/* -display :0 -forever -loop -noxdamage -repeat -rfbauth /etc/x11vnc.passwd -shared
+ExecStop=/usr/bin/killall x11vnc
+Restart=on-failure
+#Restart-sec=10
+
+[Install]
+WantedBy=graphical.target

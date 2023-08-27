@@ -8,7 +8,7 @@
     - name: Configure debian systems
       ansible.builtin.include_role:
         name: debian
-      when: ansible_os_family == 'Debian'
+      when: ansible_os_family == "Debian"
 
     - name: Install clash-meta
       ansible.builtin.include_role:
@@ -69,3 +69,18 @@
     - name: Install categraf
       ansible.builtin.include_role:
         name: categraf
+
+    - name: Install ddns-go
+      ansible.builtin.include_role:
+        name: ddns-go
+      when: inventory_hostname == "y9000p"
+
+    - name: Install cloudflared
+      ansible.builtin.include_role:
+        name: cloudflared
+      when: inventory_hostname == "y9000p"
+
+    - name: Install vaultwarden
+      ansible.builtin.include_role:
+        name: vaultwarden
+      when: inventory_hostname == "y9000p"
