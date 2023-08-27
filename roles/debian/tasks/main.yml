@@ -31,6 +31,7 @@
     - bash-completion
     - vim
     - htop
+    - curl
 
 - name: Install x470 package
   ansible.builtin.apt:

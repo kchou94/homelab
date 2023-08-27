@@ -1,0 +1,36 @@
+---
+- name: Start alist Server
+  block:
+  - name: Create alist Directories
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      mode: "0755"
+    with_items:
+      - /data/alist
+
+  - name: Alist Docker Container
+    community.docker.docker_container:
+      name: alist
+      image: xhofe/alist:v3.26.0
+      volumes:
+        - "/data/alist:/opt/alist/data"
+      networks:
+        - name: homelab
+      env:
+        TZ: Asia/Shanghai
+        PUID: "{{ ansible_user_id }}"
+        PGID: "{{ ansible_user_id }}"
+        UMASK: "022"
+      restart_policy: unless-stopped
+  when: alist_enabled is true
+
+- name: Stop alist Server
+  block:
+    - name: Stop alist Server
+      community.docker.docker_container:
+        name: "{{ alist_container_name }}"
+        state: absent
+  when: alist_enabled is false

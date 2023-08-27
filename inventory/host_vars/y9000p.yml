@@ -17,3 +17,5 @@ ddns_go_enabled: true
 
 vaultwarden_enabled: true
 vaultwarden_allow_signups: false
+
+alist_enabled: true

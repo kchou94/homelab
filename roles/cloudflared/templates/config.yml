@@ -11,4 +11,7 @@ ingress:
   # - hostname: "vaultwarden.{{ cloudflared_tunnel_domain_name }}/admin"
   #   service: http://vaultwarden
 
+  - hostname: "alist.{{ cloudflared_tunnel_domain_name }}"
+    service: http://alist:5244
+
   - service: http_status:404
