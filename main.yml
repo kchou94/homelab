@@ -103,3 +103,8 @@
       ansible.builtin.include_role:
         name: nvidia
       when: inventory_hostname == "y9000p"
+
+    - name: Install photoprism
+      ansible.builtin.include_role:
+        name: photoprism
+      when: inventory_hostname == "y9000p"

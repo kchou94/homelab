@@ -14,7 +14,7 @@ ingress:
   - hostname: "alist.{{ cloudflared_tunnel_domain_name }}"
     service: http://alist:5244
 
-  # - hostname: "sd.{{ cloudflared_tunnel_domain_name }}"
-  #   service: http://192.168.50.4:7860
+  - hostname: "photoprism.{{ cloudflared_tunnel_domain_name }}"
+    service: http://photoprism:2342
 
   - service: http_status:404

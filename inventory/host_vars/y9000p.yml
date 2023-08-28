@@ -21,3 +21,5 @@ vaultwarden_allow_signups: false
 alist_enabled: true
 
 gitea_enabled: false
+
+photoprism_enabled: true
