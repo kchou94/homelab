@@ -32,9 +32,9 @@
   register: nvidia_ctk_output
   changed_when: nvidia_ctk_output.rc != 0
 
-- name: Restart docker
-  ansible.builtin.service:
-    name: docker
-    state: restarted
-    enabled: true
-  when: nvidia_ctk_output is changed
+# - name: Restart docker
+#   ansible.builtin.service:
+#     name: docker
+#     state: restarted
+#     enabled: true
+#   when: nvidia_ctk_output is changed

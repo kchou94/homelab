@@ -14,7 +14,7 @@ ingress:
   - hostname: "alist.{{ cloudflared_tunnel_domain_name }}"
     service: http://alist:5244
 
-  - hostname: "gitea.{{ cloudflared_tunnel_domain_name }}"
-    service: http://gitea:3000
+  # - hostname: "sd.{{ cloudflared_tunnel_domain_name }}"
+  #   service: http://192.168.50.4:7860
 
   - service: http_status:404
