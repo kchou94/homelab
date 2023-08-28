@@ -1,4 +1,9 @@
 ---
+- name: check if nvidia-container-toolkit-keyring.gpg exists
+  ansible.builtin.stat:
+    path: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+  register: nvidia_keyring_stat
+
 - name: Add nvidia-container apt repository
   ansible.builtin.shell:
     cmd: |
@@ -6,8 +11,7 @@
       curl -s -L https://nvidia.github.io/libnvidia-container/debian11/libnvidia-container.list | \
             sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
             sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
-  register: nvidia_apt_output
-  changed_when: nvidia_apt_output.rc != 0
+  when: nvidia_keyring_stat.stat.exists == False
 
 - name: Update apt cache
   ansible.builtin.apt:
@@ -22,21 +26,15 @@
     - nvidia-container-toolkit
     - nvidia-container-runtime
 
-# - name: Enaible nvidia-container-runtime
-#   ansible.builtin.command: >
-#     nvidia-ctk runtime configure --runtime=docker
-#   register: nvidia_ctk_output
-#   changed_when: nvidia_ctk_output.rc != 0
+- name: Enaible nvidia-container-runtime
+  ansible.builtin.command: >
+    nvidia-ctk runtime configure --runtime=docker
+  register: nvidia_ctk_output
+  changed_when: nvidia_ctk_output.rc != 0
 
-# - name: Restart docker
-#   ansible.builtin.service:
-#     name: docker
-#     state: restarted
-#     enabled: true
-#   when: nvidia_ctk_output is changed
-
-# - name: Enable Grafana service
-#   ansible.builtin.service:
-#     name: grafana-server
-#     enabled: true
-#     state: started
+- name: Restart docker
+  ansible.builtin.service:
+    name: docker
+    state: restarted
+    enabled: true
+  when: nvidia_ctk_output is changed
