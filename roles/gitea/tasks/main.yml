@@ -1,0 +1,43 @@
+---
+- name: Start gitea Server
+  block:
+  - name: Create gitea Directories
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      mode: "0755"
+    with_items:
+      - /data/gitea
+      - /data/gitea/data
+      - /data/gitea/config
+
+  - name: gitea Docker Container
+    community.docker.docker_container:
+      name: gitea
+      image: gitea/gitea:1.20.3-rootless
+      volumes:
+        - "/data/gitea/data:/var/lib/gitea"
+        - "/data/gitea/config:/etc/gitea"
+        - "/etc/timezone:/etc/timezone:ro"
+        - "/etc/localtime:/etc/localtime:ro"
+      networks:
+        - name: homelab
+      env:
+        TZ: Asia/Shanghai
+        GITEA__database__DB_TYPE: mysql
+        GITEA__database__HOST: "{{ mysql_host }}:{{ mysql_port }}"
+        GITEA__database__NAME: gitea
+        GITEA__database__USER: gitea
+        GITEA__database__PASSWD: "{{ mysql_gitea_password }}"
+      restart_policy: always
+  when: gitea_enabled is true
+
+- name: Stop gitea Server
+  block:
+    - name: Stop gitea Server
+      community.docker.docker_container:
+        name: gitea
+        state: absent
+  when: gitea_enabled is false

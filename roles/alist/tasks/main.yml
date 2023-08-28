@@ -10,6 +10,7 @@
       mode: "0755"
     with_items:
       - /data/alist
+      - /data/alist-data
 
   - name: Alist Docker Container
     community.docker.docker_container:
@@ -17,6 +18,7 @@
       image: xhofe/alist:v3.26.0
       volumes:
         - "/data/alist:/opt/alist/data"
+        - "/data/alist-data:/data"
       networks:
         - name: homelab
       env:
@@ -24,6 +26,7 @@
         PUID: "{{ ansible_user_id }}"
         PGID: "{{ ansible_user_id }}"
         UMASK: "022"
+        site_url: "https://alist.{{ cloudflared_tunnel_domain_name }}"
       restart_policy: unless-stopped
   when: alist_enabled is true
 

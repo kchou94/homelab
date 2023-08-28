@@ -19,3 +19,5 @@ vaultwarden_enabled: true
 vaultwarden_allow_signups: false
 
 alist_enabled: true
+
+gitea_enabled: false
