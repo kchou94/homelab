@@ -19,15 +19,15 @@
         name: clash-meta
       when: clash_meta_enabled is defined and clash_meta_enabled
 
-    - name: Install mysql
-      ansible.builtin.include_role:
-        name: geerlingguy.mysql
-      when: mysql_enabled is defined and mysql_enabled
+    # - name: Install mysql
+    #   ansible.builtin.include_role:
+    #     name: geerlingguy.mysql
+    #   when: mysql_enabled is defined and mysql_enabled
 
-    - name: Install redis
-      ansible.builtin.include_role:
-        name: geerlingguy.redis
-      when: redis_enabled is defined and redis_enabled
+    # - name: Install redis
+    #   ansible.builtin.include_role:
+    #     name: geerlingguy.redis
+    #   when: redis_enabled is defined and redis_enabled
 
     # - name: Install pre requisites
     #   ansible.builtin.package:
@@ -40,39 +40,45 @@
     #     name: githubixx.ansible_role_wireguard
     #   when: wireguard_enabled is defined and wireguard_enabled
 
-    - name: Install loki
-      ansible.builtin.include_role:
-        name: loki
-      when: loki_enabled is defined and loki_enabled
+    # - name: Install loki
+    #   ansible.builtin.include_role:
+    #     name: loki
+    #   when: loki_enabled is defined and loki_enabled
 
-    - name: Install promtail
-      ansible.builtin.include_role:
-        name: promtail
-      when: promtail_enabled is defined and promtail_enabled
+    # - name: Install promtail
+    #   ansible.builtin.include_role:
+    #     name: promtail
+    #   when: promtail_enabled is defined and promtail_enabled
 
-    - name: Install grafana
-      ansible.builtin.include_role:
-        name: grafana
-      when: grafana_enabled is defined and grafana_enabled
+    # - name: Install grafana
+    #   ansible.builtin.include_role:
+    #     name: grafana
+    #   when: grafana_enabled is defined and grafana_enabled
 
     - name: Install docker
       ansible.builtin.include_role:
         name: geerlingguy.docker
       when: docker_enabled is defined and docker_enabled
 
-    - name: Install victoriametrics single
-      ansible.builtin.include_role:
-        name: victoriametrics.cluster.single
-      when: victoriametrics_enabled is defined and victoriametrics_enabled
+    # - name: Install victoriametrics single
+    #   ansible.builtin.include_role:
+    #     name: victoriametrics.cluster.single
+    #   when: victoriametrics_enabled is defined and victoriametrics_enabled
 
-    - name: Install n9e
-      ansible.builtin.include_role:
-        name: n9e
-      when: n9e_enabled is defined and n9e_enabled
+    # - name: Install n9e
+    #   ansible.builtin.include_role:
+    #     name: n9e
+    #   when: n9e_enabled is defined and n9e_enabled
 
-    - name: Install categraf
+    # - name: Install categraf
+    #   ansible.builtin.include_role:
+    #     name: categraf
+    #   when: inventory_hostname != "bwg"
+
+    - name: Install nvidia
       ansible.builtin.include_role:
-        name: categraf
+        name: nvidia
+      when: inventory_hostname == "y9000p"
 
     - name: Install ddns-go
       ansible.builtin.include_role:
@@ -82,29 +88,34 @@
     - name: Install cloudflared
       ansible.builtin.include_role:
         name: cloudflared
-      when: inventory_hostname == "y9000p"
+      when: inventory_hostname == "bwg"
 
-    - name: Install vaultwarden
-      ansible.builtin.include_role:
-        name: vaultwarden
-      when: inventory_hostname == "y9000p"
+    # - name: Install vaultwarden
+    #   ansible.builtin.include_role:
+    #     name: vaultwarden
+    #   when: inventory_hostname == "y9000p"
 
-    - name: Install alist
-      ansible.builtin.include_role:
-        name: alist
-      when: inventory_hostname == "y9000p"
+    # - name: Install alist
+    #   ansible.builtin.include_role:
+    #     name: alist
+    #   when: inventory_hostname == "y9000p"
 
-    - name: Install gitea
-      ansible.builtin.include_role:
-        name: gitea
-      when: inventory_hostname == "y9000p"
+    # - name: Install gitea
+    #   ansible.builtin.include_role:
+    #     name: gitea
+    #   when: inventory_hostname == "y9000p"
 
-    - name: Install nvidia
-      ansible.builtin.include_role:
-        name: nvidia
-      when: inventory_hostname == "y9000p"
+    # - name: Install photoprism
+    #   ansible.builtin.include_role:
+    #     name: photoprism
+    #   when: inventory_hostname == "y9000p"
 
-    - name: Install photoprism
+    # - name: Install nextcloud
+    #   ansible.builtin.include_role:
+    #     name: nextcloud
+    #   when: inventory_hostname == "y9000p"
+
+    - name: Install jenkins
       ansible.builtin.include_role:
-        name: photoprism
+        name: geerlingguy.jenkins
       when: inventory_hostname == "y9000p"

@@ -10,74 +10,39 @@
       mode: "0755"
     with_items:
       - /data/nextcloud
-      - /data/nextcloud/Pictures
-      - /data/nextcloud/storage
 
   - name: nextcloud Docker Container
     community.docker.docker_container:
       name: nextcloud
       image: nextcloud:27.0.2-apache
-      security_opts:
-        - seccomp=unconfined
-        - apparmor=unconfined
       env:
         TZ: Asia/Shanghai
-        nextcloud_ADMIN_USER: admin
-        nextcloud_ADMIN_PASSWORD: "{{ nextcloud_admin_password }}"
-        nextcloud_SITE_URL: https://nextcloud.{{ cloudflared_tunnel_domain_name }}
-        nextcloud_DISABLE_TLS: "false"                # disables HTTPS/TLS even if the site URL starts with https:// and a certificate is available
-        nextcloud_DEFAULT_TLS: "true"                 # defaults to a self-signed HTTPS/TLS certificate if no other certificate is available
-        nextcloud_ORIGINALS_LIMIT: "5000"               # file size limit for originals in MB (increase for high-res video)
-        nextcloud_HTTP_COMPRESSION: "gzip"            # improves transfer speed and bandwidth utilization (none or gzip)
-        nextcloud_LOG_LEVEL: "info"                   # log level: trace, debug, info, warning, error, fatal, or panic
-        nextcloud_READONLY: "false"                   # do not modify originals directory (reduced functionality)
-        nextcloud_EXPERIMENTAL: "false"               # enables experimental features
-        nextcloud_DISABLE_CHOWN: "false"              # disables updating storage permissions via chmod and chown on startup
-        nextcloud_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
-        nextcloud_DISABLE_SETTINGS: "false"           # disables settings UI and API
-        nextcloud_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
-        nextcloud_DISABLE_FACES: "false"              # disables face detection and recognition (requires TensorFlow)
-        nextcloud_DISABLE_CLASSIFICATION: "false"     # disables image classification (requires TensorFlow)
-        nextcloud_DISABLE_VECTORS: "false"            # disables vector graphics support
-        nextcloud_DISABLE_RAW: "false"                # disables indexing and conversion of RAW images
-        nextcloud_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
-        nextcloud_JPEG_QUALITY: "85"                    # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
-        nextcloud_DETECT_NSFW: "true"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
-        nextcloud_UPLOAD_NSFW: "true"                 # allows uploads that MAY be offensive (no effect without TensorFlow)
-        # nextcloud_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that doesn't require a server
-        nextcloud_DATABASE_DRIVER: "mysql"            # use MariaDB 10.5+ or MySQL 8+ instead of SQLite for improved performance
-        nextcloud_DATABASE_SERVER: "{{ mysql_host }}:3306"     # MariaDB or MySQL database server (hostname:port)
-        nextcloud_DATABASE_NAME: "nextcloud"         # MariaDB or MySQL database schema name
-        nextcloud_DATABASE_USER: "nextcloud"         # MariaDB or MySQL database user name
-        nextcloud_DATABASE_PASSWORD: "{{ mysql_nextcloud_password }}"       # MariaDB or MySQL database user password
-        nextcloud_SITE_CAPTION: "AI-Powered Photos App"
-        nextcloud_SITE_DESCRIPTION: ""                # meta site description
-        nextcloud_SITE_AUTHOR: ""                     # meta site author
-        ## Video Transcoding (https://docs.nextcloud.app/getting-started/advanced/transcoding/):
-        nextcloud_FFMPEG_ENCODER: "nvidia"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
-        nextcloud_FFMPEG_SIZE: "3840"               # video size limit in pixels (720-7680) (default: 3840)
-        nextcloud_FFMPEG_BITRATE: "50"              # video bitrate limit in Mbit/s (default: 50)
-        ## Run/install on first startup (options: update https gpu tensorflow davfs clitools clean):
-        nextcloud_INIT: "https gpu tensorflow"
-        ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
-        nextcloud_UID: "1000"
-        nextcloud_GID: "1000"
-        nextcloud_UMASK: "0000"
-        NVIDIA_VISIBLE_DEVICES: "all"
-        NVIDIA_DRIVER_CAPABILITIES: "compute,video,utility"
-      user: 1000:1000
-      working_dir: /nextcloud
+        MYSQL_HOST: "{{ mysql_host }}"
+        MYSQL_PASSWORD: "{{ mysql_nextcloud_password }}"
+        MYSQL_DATABASE: nextcloud
+        MYSQL_USER: nextcloud
+        REDIS_HOST: "{{ redis_host }}"
+        REDIS_HOST_PASSWORD: "{{ redis_requirepass }}"
+        NEXTCLOUD_ADMIN_USER: admin
+        NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud_admin_password }}"
       volumes:
-        - "/data/nextcloud/Pictures:/nextcloud/originals"
-        - "/data/nextcloud/storage:/nextcloud/storage"
+        - "/data/nextcloud/:/var/www/html/"
+      networks:
+        - name: homelab
+      ports:
+        - "8080:80"
+      restart_policy: always
+
+  - name: nextcloud cron Docker Container
+    community.docker.docker_container:
+      name: nextcloud-cron
+      image: nextcloud:27.0.2-apache
+      volumes:
+        - "/data/nextcloud/:/var/www/html/"
+      entrypoint: /cron.sh
       networks:
         - name: homelab
       restart_policy: always
-      device_requests:
-        - driver: nvidia
-          count: 1
-          capabilities:
-            - gpu
   when: nextcloud_enabled is true
 
 - name: Stop nextcloud Server
@@ -85,5 +50,9 @@
     - name: Stop nextcloud Server
       community.docker.docker_container:
         name: nextcloud
+        state: absent
+    - name: Stop nextcloud cron Server
+      community.docker.docker_container:
+        name: nextcloud-cron
         state: absent
   when: nextcloud_enabled is false

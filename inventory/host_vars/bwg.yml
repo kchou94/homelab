@@ -1,0 +1,4 @@
+---
+docker_enabled: true
+cloudflared_enabled: true
+ntp_timezone: Etc/UTC

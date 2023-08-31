@@ -2,19 +2,22 @@ ingress:
   # - hostname: "echo-server.{{ cloudflared_tunnel_domain_name }}"
   #   service: http://echo-server:8080
 
-  - hostname: "vaultwarden.{{ cloudflared_tunnel_domain_name }}"
-    service: http://vaultwarden
+  # - hostname: "vaultwarden.{{ cloudflared_tunnel_domain_name }}"
+  #   service: http://vaultwarden
 
-  - hostname: "vaultwarden.{{ cloudflared_tunnel_domain_name }}/notifications/hub"
-    service: http://vaultwarden:3012
+  # - hostname: "vaultwarden.{{ cloudflared_tunnel_domain_name }}/notifications/hub"
+  #   service: http://vaultwarden:3012
 
   # - hostname: "vaultwarden.{{ cloudflared_tunnel_domain_name }}/admin"
   #   service: http://vaultwarden
 
-  - hostname: "alist.{{ cloudflared_tunnel_domain_name }}"
-    service: http://alist:5244
+  # - hostname: "alist.{{ cloudflared_tunnel_domain_name }}"
+  #   service: http://alist:5244
 
   - hostname: "photoprism.{{ cloudflared_tunnel_domain_name }}"
-    service: http://photoprism:2342
+    service: http://100.77.212.44:2342
+
+  - hostname: "nextcloud.{{ cloudflared_tunnel_domain_name }}"
+    service: http://100.77.212.44:8080
 
   - service: http_status:404

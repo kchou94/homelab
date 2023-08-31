@@ -1,13 +1,13 @@
 ---
 collections:
-  - name: victoriametrics.cluster
-    version: 0.41.0
+#   - name: victoriametrics.cluster
+#     version: 0.41.0
 
-  - name: community.mysql
-    version: 3.7.2
+#   - name: community.mysql
+#     version: 3.7.2
 
-  # - name: prometheus.prometheus
-  #   version: 0.5.1
+  - name: prometheus.prometheus
+    version: 0.6.0
 
   # - name: githubixx.ansible_role_wireguard
   #   version: 14.0.0
@@ -24,3 +24,6 @@ roles:
 
   - name: geerlingguy.ntp
     version: 2.3.3
+
+  - name: geerlingguy.jenkins
+    version: 5.0.1

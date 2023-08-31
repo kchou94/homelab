@@ -14,3 +14,5 @@ wireguard_unmanaged_peers:
   mac:
     public_key: 2XTLem1g5T46Oze1OemE8xZAA2yUbyp6dKr9GISgOTg=
     allowed_ips: 10.8.0.2/32
+
+ntp_timezone: Asia/Shanghai

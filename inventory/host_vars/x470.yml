@@ -2,3 +2,4 @@
 vagrant_enabled: true
 wireguard_enabled: false
 docker_enabled: true
+ntp_timezone: Asia/Shanghai

@@ -28,7 +28,7 @@
   - name: Cloudflared Container
     community.docker.docker_container:
       name: cloudflared
-      image: cloudflare/cloudflared:2023.8.0
+      image: cloudflare/cloudflared:2023.8.1
       command:
         - "tunnel"
         - "--config"
@@ -38,12 +38,10 @@
       volumes:
         - "{{ cloudflared_data_directory }}/config.yml:/etc/cloudflared/config.yml"
         - "{{ cloudflared_data_directory }}/credentials.json:/etc/cloudflared/credentials.json"
-      networks:
-        - name: homelab
       env:
         NO_AUTOUPDATE: "true"
         TUNNEL_CRED_FILE: /etc/cloudflared/credentials.json
-        TUNNEL_TRANSPORT_PROTOCOL: http2
+        # TUNNEL_TRANSPORT_PROTOCOL: http2
       restart_policy: always
       recreate: "{{ template_config is changed }}"
   - name: Create DNS Record

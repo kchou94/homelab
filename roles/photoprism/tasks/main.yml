@@ -70,14 +70,18 @@
       volumes:
         - "/data/photoprism/Pictures:/photoprism/originals"
         - "/data/photoprism/storage:/photoprism/storage"
-      networks:
-        - name: homelab
+      ports:
+        - "2342:2342"
       restart_policy: always
       device_requests:
         - driver: nvidia
-          count: 1
+          # device_ids:
+          #   - '0'
+          count: -1
           capabilities:
-            - gpu
+          # We have one OR condition: 'gpu' AND 'utility'
+            - - gpu
+              - utility
   when: photoprism_enabled is true
 
 - name: Stop photoprism Server

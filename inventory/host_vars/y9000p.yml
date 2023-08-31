@@ -23,3 +23,19 @@ alist_enabled: true
 gitea_enabled: false
 
 photoprism_enabled: true
+
+nextcloud_enabled: true
+
+ntp_timezone: Asia/Shanghai
+
+# ansible-role-jenkins
+jenkins_package_state: latest
+jenkins_hostname: "jenkins_hostname.{{ cloudflared_tunnel_domain_name}}"
+jenkins_plugins:
+  - blueocean
+  - ssh-credentials
+  - ansible
+  - git
+  - github
+jenkins_plugins_state: latest
+jenkins_admin_username: admin
