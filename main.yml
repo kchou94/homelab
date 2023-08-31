@@ -115,6 +115,11 @@
     #     name: nextcloud
     #   when: inventory_hostname == "y9000p"
 
+    - name: Install java
+      ansible.builtin.include_role:
+        name: geerlingguy.java
+      when: inventory_hostname == "y9000p"
+
     - name: Install jenkins
       ansible.builtin.include_role:
         name: geerlingguy.jenkins

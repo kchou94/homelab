@@ -33,6 +33,8 @@
     - htop
     - curl
     - tmux
+    - ansible
+    - ansible-lint
 
 - name: Install x470 package
   ansible.builtin.apt:

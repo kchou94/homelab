@@ -39,3 +39,5 @@ jenkins_plugins:
   - github
 jenkins_plugins_state: latest
 jenkins_admin_username: admin
+java_packages:
+  - openjdk-17-jdk
