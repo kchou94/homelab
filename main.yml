@@ -10,11 +10,6 @@
     #     name: geerlingguy.docker
     #   when: docker_enabled is defined and docker_enabled
 
-    # - name: Install docker pip
-    #   ansible.builtin.include_role:
-    #     name: geerlingguy.pip
-    #   when: inventory_hostname == "x470"
-
     # - name: Install clash-meta
     #   ansible.builtin.include_role:
     #     name: clash-meta
@@ -90,11 +85,6 @@
     #     name: ddns-go
     #   when: inventory_hostname == "y9000p"
 
-    # - name: Install cloudflared
-    #   ansible.builtin.include_role:
-    #     name: cloudflared
-    #   when: inventory_hostname == "bwg"
-
     # - name: Install vaultwarden
     #   ansible.builtin.include_role:
     #     name: vaultwarden
@@ -108,7 +98,6 @@
     # - name: Install gitea
     #   ansible.builtin.include_role:
     #     name: gitea
-    #   when: inventory_hostname == "y9000p"
 
     # - name: Install photoprism
     #   ansible.builtin.include_role:
@@ -120,7 +109,12 @@
     #     name: nextcloud
     #   when: inventory_hostname == "y9000p"
 
-    - name: Install gitea
+    # - name: Install cloudflared
+    #   ansible.builtin.include_role:
+    #     name: cloudflared
+    #   when: inventory_hostname == "bwg"
+
+    - name: Install jenkins
       ansible.builtin.include_role:
-        name: gitea
-      when: gitea_enabled is defined and gitea_enabled
+        name: jenkins
+      when: inventory_hostname == "x470"

@@ -12,7 +12,7 @@ services:
       - {{ gitea_dir }}/config:/etc/gitea
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    restarts: always
+    restart: always
     depends_on:
       - gitea-db
 
@@ -26,4 +26,8 @@ services:
       - POSTGRES_DB=gitea
     volumes:
       - {{ gitea_dir }}/postgres:/var/lib/postgresql/data
-    restarts: always
+    restart: always
+
+networks:
+  homelab:
+    external: true
