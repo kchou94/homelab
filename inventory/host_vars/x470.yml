@@ -3,3 +3,9 @@ vagrant_enabled: true
 wireguard_enabled: false
 docker_enabled: true
 ntp_timezone: Asia/Shanghai
+gitea_enabled: true
+pip_install_packages:
+  - name: docker
+    extra_args: --break-system-packages
+  - name: docker-compose
+    extra_args: --break-system-packages

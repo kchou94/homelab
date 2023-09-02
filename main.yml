@@ -5,19 +5,29 @@
   gather_facts: true
 
   tasks:
-    - name: Configure debian systems
-      ansible.builtin.include_role:
-        name: debian
-      when: ansible_os_family == "Debian"
+    # - name: Install docker
+    #   ansible.builtin.include_role:
+    #     name: geerlingguy.docker
+    #   when: docker_enabled is defined and docker_enabled
 
-    - name: Configure ntp
-      ansible.builtin.include_role:
-        name: geerlingguy.ntp
+    # - name: Install docker pip
+    #   ansible.builtin.include_role:
+    #     name: geerlingguy.pip
+    #   when: inventory_hostname == "x470"
 
-    - name: Install clash-meta
-      ansible.builtin.include_role:
-        name: clash-meta
-      when: clash_meta_enabled is defined and clash_meta_enabled
+    # - name: Install clash-meta
+    #   ansible.builtin.include_role:
+    #     name: clash-meta
+    #   when: clash_meta_enabled is defined and clash_meta_enabled
+
+    # - name: Configure debian systems
+    #   ansible.builtin.include_role:
+    #     name: debian
+    #   when: ansible_os_family == "Debian"
+
+    # - name: Configure ntp
+    #   ansible.builtin.include_role:
+    #     name: geerlingguy.ntp
 
     # - name: Install mysql
     #   ansible.builtin.include_role:
@@ -55,11 +65,6 @@
     #     name: grafana
     #   when: grafana_enabled is defined and grafana_enabled
 
-    - name: Install docker
-      ansible.builtin.include_role:
-        name: geerlingguy.docker
-      when: docker_enabled is defined and docker_enabled
-
     # - name: Install victoriametrics single
     #   ansible.builtin.include_role:
     #     name: victoriametrics.cluster.single
@@ -75,20 +80,20 @@
     #     name: categraf
     #   when: inventory_hostname != "bwg"
 
-    - name: Install nvidia
-      ansible.builtin.include_role:
-        name: nvidia
-      when: inventory_hostname == "y9000p"
+    # - name: Install nvidia
+    #   ansible.builtin.include_role:
+    #     name: nvidia
+    #   when: inventory_hostname == "y9000p"
 
-    - name: Install ddns-go
-      ansible.builtin.include_role:
-        name: ddns-go
-      when: inventory_hostname == "y9000p"
+    # - name: Install ddns-go
+    #   ansible.builtin.include_role:
+    #     name: ddns-go
+    #   when: inventory_hostname == "y9000p"
 
-    - name: Install cloudflared
-      ansible.builtin.include_role:
-        name: cloudflared
-      when: inventory_hostname == "bwg"
+    # - name: Install cloudflared
+    #   ansible.builtin.include_role:
+    #     name: cloudflared
+    #   when: inventory_hostname == "bwg"
 
     # - name: Install vaultwarden
     #   ansible.builtin.include_role:
@@ -115,12 +120,7 @@
     #     name: nextcloud
     #   when: inventory_hostname == "y9000p"
 
-    - name: Install java
+    - name: Install gitea
       ansible.builtin.include_role:
-        name: geerlingguy.java
-      when: inventory_hostname == "y9000p"
-
-    - name: Install jenkins
-      ansible.builtin.include_role:
-        name: geerlingguy.jenkins
-      when: inventory_hostname == "y9000p"
+        name: gitea
+      when: gitea_enabled is defined and gitea_enabled

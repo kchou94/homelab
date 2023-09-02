@@ -16,3 +16,5 @@ wireguard_unmanaged_peers:
     allowed_ips: 10.8.0.2/32
 
 ntp_timezone: Asia/Shanghai
+
+docker_enabled: true

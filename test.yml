@@ -1,0 +1,13 @@
+---
+- name: Ansible homelab test
+  hosts: all
+
+  tasks:
+
+    - name: Install docker
+      ansible.builtin.include_role:
+        name: geerlingguy.docker
+
+    - name: Install jenkins
+      ansible.builtin.include_role:
+        name: jenkins

@@ -36,14 +36,14 @@
     - ansible
     - ansible-lint
 
-- name: Install x470 package
-  ansible.builtin.apt:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - python3-docker
-    - openconnect
-  when: inventory_hostname == 'x470'
+# - name: Install x470 package
+#   ansible.builtin.apt:
+#     name: "{{ item }}"
+#     state: present
+#   with_items:
+#     - python3-docker
+#     - openconnect
+#   when: inventory_hostname == 'x470'
 
 - name: Install b550m package
   ansible.builtin.apt:
@@ -115,12 +115,12 @@
     #     reload: true
   when: inventory_hostname == 'x470'
 
-# - name: Create homelab network
-#   community.docker.docker_network:
-#     name: homelab
-#   when: docker_enabled is defined and docker_enabled is true
-#   register: result
-#   until: result is succeeded
+- name: Create homelab network
+  community.docker.docker_network:
+    name: homelab
+  when: docker_enabled is defined and docker_enabled is true
+  register: result
+  until: result is succeeded
 
 - name: Install amd gpu driver and steam and fonts
   ansible.builtin.apt:

@@ -1,7 +1,7 @@
 ---
-- name: Start gitea Server
+- name: Start jenkins Server
   block:
-  - name: Create gitea directories
+  - name: Create jenkins directories
     ansible.builtin.file:
       path: "{{ item }}"
       state: directory
@@ -9,29 +9,27 @@
       group: "{{ ansible_user }}"
       mode: "0755"
     with_items:
-      - "{{ gitea_dir }}"
-      - "{{ gitea_dir }}/data"
-      - "{{ gitea_dir }}/config"
-      - "{{ gitea_dir }}/postgres"
+      - "{{ jenkins_dir }}"
+      - "{{ jenkins_dir }}/jenkins_home"
 
   - name: Template docker compose file
     ansible.builtin.template:
       src: docker-compose.yml.j2
-      dest: "{{ gitea_dir }}/docker-compose.yml"
+      dest: "{{ jenkins_dir }}/docker-compose.yml"
       owner: "{{ ansible_user }}"
       group: "{{ ansible_user }}"
       mode: "0644"
 
-  - name: gitea Docker Container
+  - name: Jenkins Docker Container
     community.docker.docker_compose:
-      project_src: "{{ gitea_dir }}"
+      project_src: "{{ jenkins_dir }}"
       state: present
-  when: gitea_enabled is true
+  when: jenkins_enabled is true
 
-- name: Stop gitea Server
+- name: Stop jenkins Server
   block:
-    - name: Stop gitea Server
+    - name: Stop jenkins Server
       community.docker.docker_compose:
-        project_src: "{{ gitea_dir }}"
+        project_src: "{{ jenkins_dir }}"
         state: absent
-  when: gitea_enabled is false
+  when: jenkins_enabled is false
