@@ -1,5 +1,9 @@
 pipeline {
-   agent { dockerfile true }
+   agent {
+      dockerfile {
+         filename 'Dockerfile'
+      }
+   }
    environment {
       AUTHORIZED_KEY = credentials('MY_AUTHORIZED_KEY')
       VAULT_FILE     = credentials('MY_VAULT_FILE')
