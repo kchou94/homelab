@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.9
+    container_name: traefik
+    networks:
+      - homelab
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /data/docker/traefik/acme.json:/acme.json
+    command:
+      - '--api.dashboard=true'
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.websecure.address=:443'
+      - '--entrypoints.web.http.redirections.entrypoint.to=websecure'
+      - '--entrypoints.web.http.redirections.entrypoint.scheme=https'
+      - '--providers.docker=true'
+      - '--providers.docker.endpoint=unix:///var/run/docker.sock'
+      - '--providers.docker.watch=true'
+      - '--providers.docker.exposedByDefault=false'
+      - '--certificatesResolvers.myresolver.acme.httpChallenge.entryPoint=web'
+      - '--certificatesresolvers.myresolver.acme.email=your-mail@mail.com'
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: traefik
+      traefik.http.routers.dashboard.rule: Host(`traefik.yourdomain.com`)
+      traefik.http.routers.dashboard.tls: "true"
+      traefik.http.routers.dashboard.tls.certresolver: myresolver
+      traefik.http.routers.dashboard.service: "api@internal"
+      traefik.http.routers.dashboard.middlewares: auth
+      # 账号密码 admin/P@88w0rd 生成 echo $(htpasswd -nb user password) | sed -e s/\\$/\\$\\$/g
+      traefik.http.middlewares.auth.basicauth.users: "admin:$$apr1$$q8q0qpzT$$lvzMP7VYd9EUcG/wkIsAN."
+
+networks:
+  homelab:
+    external: true
