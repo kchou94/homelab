@@ -18,3 +18,6 @@ wireguard_unmanaged_peers:
 ntp_timezone: Asia/Shanghai
 
 docker_enabled: true
+
+portainer_enabled: false
+portainer_agent_enabled: true

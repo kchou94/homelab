@@ -1,0 +1,64 @@
+---
+- name: Ansible homelab
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Install clash-meta
+      ansible.builtin.include_role:
+        name: clash-meta
+      when: clash_meta_enabled is defined and clash_meta_enabled
+
+    - name: Configure debian systems
+      ansible.builtin.include_role:
+        name: debian
+      when: ansible_os_family == "Debian"
+
+    - name: Configure ntp
+      ansible.builtin.include_role:
+        name: geerlingguy.ntp
+
+    - name: Install docker
+      ansible.builtin.include_role:
+        name: geerlingguy.docker
+      when: docker_enabled is defined and docker_enabled
+
+    - name: Create Docker Directories
+      ansible.builtin.file:
+        path: "{{ docker_home }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0755"
+
+    - name: Create homelab network
+      community.docker.docker_network:
+        name: homelab
+      when: group_names == "homelab"
+      register: result
+      until: result is succeeded
+
+    # - name: Install pre requisites
+    #   ansible.builtin.package:
+    #     name: iptables
+    #     state: present
+    #   when: wireguard_enabled is defined and wireguard_enabled
+
+    # - name: Install wireguard
+    #   ansible.builtin.include_role:
+    #     name: githubixx.ansible_role_wireguard
+    #   when: wireguard_enabled is defined and wireguard_enabled
+
+    - name: Install cloudflared
+      ansible.builtin.include_role:
+        name: cloudflared
+      when: inventory_hostname == "bwg"
+
+    - name: Install portainer
+      ansible.builtin.include_role:
+        name: portainer
+
+    - name: Install portainer agent
+      ansible.builtin.include_role:
+        name: portainer.agent

@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  qbittorrentee:
+    image: bernylinville/qbittorrentee:4.5.5.10
+    container_name: qbittorrentee
+    networks:
+      - homelab
+    ports:
+      - 8080:8080
+      - 16881:16881
+      - 16881:16881/udp
+    environment:
+      TZ: Asia/Shanghai
+      WEBUIPORT: 8080
+    volumes:
+      - /data/docker/qbittorrentee/config:/config
+      - /nas/downloads:/downloads
+    restart: always
+
+networks:
+  homelab:
+    external: true

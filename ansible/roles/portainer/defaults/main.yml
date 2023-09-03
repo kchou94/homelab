@@ -1,0 +1,6 @@
+---
+portainer_enabled: false
+portainer_data_directory: "{{ docker_home }}/portainer/data"
+portainer_image_version: "2.19.0"
+portainer_port: "9443"
+portainer_memory: 1g

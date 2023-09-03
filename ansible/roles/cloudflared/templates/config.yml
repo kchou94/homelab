@@ -3,7 +3,7 @@ ingress:
   #   service: http://echo-server:8080
 
   - hostname: "vaultwarden.{{ cloudflared_tunnel_domain_name }}"
-    service: http://100.120.83.64:9002
+    service: http://100.77.247.28:9001
 
   # - hostname: "vaultwarden.{{ cloudflared_tunnel_domain_name }}/notifications/hub"
   #   service: http://vaultwarden:3012
@@ -17,7 +17,7 @@ ingress:
   # - hostname: "photoprism.{{ cloudflared_tunnel_domain_name }}"
   #   service: http://100.77.212.44:2342
 
-  - hostname: "jenkins.{{ cloudflared_tunnel_domain_name }}"
-    service: http://100.120.83.64:9001
+  - hostname: "portainer.{{ cloudflared_tunnel_domain_name }}"
+    service: https://100.77.247.28:9443
 
   - service: http_status:404
