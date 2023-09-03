@@ -85,11 +85,6 @@
     #     name: ddns-go
     #   when: inventory_hostname == "y9000p"
 
-    # - name: Install vaultwarden
-    #   ansible.builtin.include_role:
-    #     name: vaultwarden
-    #   when: inventory_hostname == "y9000p"
-
     # - name: Install alist
     #   ansible.builtin.include_role:
     #     name: alist
@@ -109,12 +104,17 @@
     #     name: nextcloud
     #   when: inventory_hostname == "y9000p"
 
-    # - name: Install cloudflared
-    #   ansible.builtin.include_role:
-    #     name: cloudflared
-    #   when: inventory_hostname == "bwg"
+    - name: Install cloudflared
+      ansible.builtin.include_role:
+        name: cloudflared
+      when: inventory_hostname == "bwg"
 
     - name: Install jenkins
       ansible.builtin.include_role:
         name: jenkins
+      when: inventory_hostname == "x470"
+
+    - name: Install vaultwarden
+      ansible.builtin.include_role:
+        name: vaultwarden
       when: inventory_hostname == "x470"

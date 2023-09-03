@@ -1,2 +1,3 @@
 ---
-vaultwarden_allow_signups: false
+vaultwarden_dir: /data/vaultwarden
+vaultwarden_image_version: 1.29.2

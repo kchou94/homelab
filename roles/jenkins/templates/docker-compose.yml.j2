@@ -7,6 +7,8 @@ services:
     ports:
       - 9001:8080
       - 50000:50000
+    environment:
+      TZ: Asia/Shanghai
     volumes:
       - {{ jenkins_dir }}/jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock

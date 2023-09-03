@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  vaultwarden:
+    image: vaultwarden/server:{{ vaultwarden_image_version }}
+    networks:
+      - homelab
+    ports:
+      - 9002:80
+    environment:
+      TZ: Asia/Shanghai
+      DOMAIN: "https://vaultwarden.{{ cloudflared_tunnel_domain_name }}"
+      SIGNUPS_ALLOWED: "false"
+    volumes:
+      - {{ vaultwarden_dir }}/data:/data
+    restart: always
+
+networks:
+  homelab:
+    external: true
