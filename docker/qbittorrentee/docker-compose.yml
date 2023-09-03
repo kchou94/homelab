@@ -11,7 +11,7 @@ services:
       - 16881:16881/udp
     environment:
       TZ: Asia/Shanghai
-      WEBUIPORT: 8080
+      WEBUIPORT: "8080"
     volumes:
       - /data/docker/qbittorrentee/config:/config
       - /nas/downloads:/downloads
